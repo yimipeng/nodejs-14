@@ -1,4 +1,4 @@
-const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
+// const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
 const my_tracer = require('./create-a-tracer');
 const AWS = require('aws-sdk');
 
@@ -6,10 +6,6 @@ const express = require('express');
 const app = express();
 const process = require('process')
 const exec = require('child_process').exec;
-
-
-
-
 
 var node_version;
 
