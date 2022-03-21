@@ -1,3 +1,5 @@
+'use strict'
+
 // OTel JS - API
 const { trace } = require('@opentelemetry/api');
 
