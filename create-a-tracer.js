@@ -1,9 +1,23 @@
-const { BatchSpanProcessor } = require("@opentelemetry/tracing");
-const { NodeTracerProvider } = require("@opentelemetry/node");
-const { OTLPTraceExporter } = require("@opentelemetry/exporter-trace-otlp-grpc");
-const { AWSXRayPropagator } = require("@opentelemetry/propagator-aws-xray");
-const { AWSXRayIdGenerator } = require("@opentelemetry/id-generator-aws-xray");
-const { trace } = require("@opentelemetry/api");
+// OTel JS - API
+const { trace } = require('@opentelemetry/api');
+
+// OTel JS - Core
+const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
+const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
+
+// OTel JS - Core - Exporters
+const { CollectorTraceExporter } = require('@opentelemetry/exporter-collector-grpc');
+
+// OTel JS - Core - Instrumentations
+const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
+const { AwsInstrumentation } = require('opentelemetry-instrumentation-aws-sdk');
+const { Resource } = require('@opentelemetry/resources');
+const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions')
+
+// OTel JS - Contrib - AWS X-Ray
+const { AWSXRayIdGenerator } = require('@opentelemetry/id-generator-aws-xray');
+const { AWSXRayPropagator } = require('@opentelemetry/propagator-aws-xray');
+
 
 module.exports = (serviceName) => {
   // create a provider using the AWS ID Generator
