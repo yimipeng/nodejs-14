@@ -21,32 +21,24 @@ const { AWSXRayIdGenerator } = require('@opentelemetry/id-generator-aws-xray');
 const { AWSXRayPropagator } = require('@opentelemetry/propagator-aws-xray');
 
 
-module.exports = (serviceName) => {
-  // create a provider using the AWS ID Generator
-  const tracerConfig = {
-    idGenerator: new AWSXRayIdGenerator(),
-    // any instrumentations can be declared here
-    instrumentations: [],
-    // any resources can be declared here
-    resources: {},
-  };
+const tracerProvider = new NodeTracerProvider({
+  resource: Resource.default().merge(new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: "node-simple-app"
+  })),
+  idGenerator: new AWSXRayIdGenerator(),
+  instrumentations: [
+    new HttpInstrumentation(),
+    new AwsInstrumentation({
+      suppressInternalInstrumentation: true
+    }),
+  ]
+});
 
-  const tracerProvider = new NodeTracerProvider(tracerConfig);
+// Expects Collector at env variable `OTEL_EXPORTER_OTLP_ENDPOINT`, otherwise, http://localhost:4317
+tracerProvider.addSpanProcessor(new SimpleSpanProcessor(new CollectorTraceExporter()));
 
-  // add OTLP exporter
-  const otlpExporter = new OTLPTraceExporter({
-    serviceName: "node-simple-app",
-    // port configured in the Collector config, defaults to 4317
-    url: "localhost:4317"
-    // credentials only required if tls setup on Collector instance
-  });
-  tracerProvider.addSpanProcessor(new BatchSpanProcessor(otlpExporter));
+tracerProvider.register({
+  propagator: new AWSXRayPropagator()
+});
 
-  // Register the tracer provider with an X-Ray propagator
-  tracerProvider.register({
-    propagator: new AWSXRayPropagator()
-  });
-
-  // Return an tracer instance
-  return trace.getTracer("node-simple-test");
-}
+module.exports = trace.getTracer("node-simple-tests");
