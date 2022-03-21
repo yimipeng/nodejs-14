@@ -4,7 +4,6 @@ const process = require('process')
 const exec = require('child_process').exec;
 const my_tracer = require('./create-a-tracer');
 
-const http = require('http');
 const AWS = require('aws-sdk');
 
 
