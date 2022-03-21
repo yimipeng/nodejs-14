@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const process = require('process')
 const exec = require('child_process').exec;
-
+const my_tracer = require('./create-a-tracer');
 var node_version;
 
 exec("node -v", function (error, stdout, stderr) {
